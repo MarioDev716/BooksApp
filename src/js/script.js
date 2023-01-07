@@ -38,10 +38,13 @@
       cover.addEventListener('dblclick', function (event) {
         event.preventDefault();
         console.log('Dubble Click!!!');
-        cover.classList.add('favorite');
         const dataId = cover.dataset.id;
         if (!favoriteBooks.includes(dataId)) {
+          cover.classList.add('favorite');
           favoriteBooks.push(dataId);
+        } else {
+          cover.classList.remove('favorite');
+          favoriteBooks.splice(favoriteBooks.indexOf(dataId), 1);
         }
         console.log(favoriteBooks);
       });
