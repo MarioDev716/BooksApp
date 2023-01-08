@@ -22,7 +22,7 @@
   function productRender() {
     const thisProduct = this;
     for (let book of dataSource.books) {
-      console.log(book);
+      //console.log(book);
       const generatedHTML = templates.cartProduct(book);
       thisProduct.element = utils.createDOMFromHTML(generatedHTML);
       const productContainer = document.querySelector(select.elements.bookList);
@@ -30,25 +30,58 @@
     }
   }
 
-  function initActions() {
+  // event.target.parentElement.matches('.book__image')
+  // lub
+  // event.target.parentElement.classList.contains('book__image')
+
+  /*   function initActions() {
     const dom = {};
-    dom.bookCovers = document.querySelectorAll(select.elements.bookCover) || [];
-    console.log(dom);
+    dom.bookCovers = document.querySelector('.books-list') || [];
+    console.log(dom.bookCovers);
     dom.bookCovers.forEach((cover) => {
-      cover.addEventListener('dblclick', function (event) {
-        event.preventDefault();
-        console.log('Dubble Click!!!');
-        const dataId = cover.dataset.id;
-        if (!favoriteBooks.includes(dataId)) {
-          cover.classList.add('favorite');
-          favoriteBooks.push(dataId);
-        } else {
-          cover.classList.remove('favorite');
-          favoriteBooks.splice(favoriteBooks.indexOf(dataId), 1);
+      cover.addEventListener('dblClick', function (event) {
+        if (event.target.parentElement.matches('.book__image')) {
+          event.preventDefault();
+          console.log('Dubble Click!!!');
+          const dataId = event.target.dataset.id;
+          if (!favoriteBooks.includes(dataId)) {
+            event.target.classList.add('favorite');
+            favoriteBooks.push(dataId);
+          } else {
+            event.target.classList.remove('favorite');
+            favoriteBooks.splice(favoriteBooks.indexOf(dataId), 1);
+          }
+          console.clear();
+          console.log(favoriteBooks);
         }
-        console.log(favoriteBooks);
       });
     });
+  } */
+
+  function initActions() {
+    console.log(document.querySelector('.books-list'));
+    console.log(document.querySelectorAll('.book__image'));
+    document
+      .querySelector('.books-list')
+      .addEventListener('dblclick', function (event) {
+        if (event.target && event.target.matches('.book__image')) {
+          //mam problem ze zrozumieniem dlaczego w tym miejscu nie działa mi deklaracja event.target.parentElement.classList.contains('book__image') lub event.target.parentElement.matches('.book__image').
+          //w tej chwili dwuklik wyzwala się tylko jak kliknę na ikone serca po wykonaniu hover na obrazku.
+          event.preventDefault();
+          console.log('Dubble Click!!!');
+          const dataId = event.target.dataset.id;
+          if (!favoriteBooks.includes(dataId)) {
+            event.target.classList.add('favorite');
+            favoriteBooks.push(dataId);
+          } else {
+            event.target.classList.remove('favorite');
+            favoriteBooks.splice(favoriteBooks.indexOf(dataId), 1);
+            console.log('test');
+          }
+          console.clear();
+          console.log(favoriteBooks);
+        }
+      });
   }
 
   const app = {
