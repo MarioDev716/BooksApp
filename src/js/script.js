@@ -9,6 +9,7 @@
       booksList: '.books-list',
       bookImage: '.book__image',
       filters: '.filters',
+      rating: '.book__rating__fill',
     },
   };
 
@@ -23,51 +24,49 @@
 
   function productRender() {
     const thisProduct = this;
+    const productContainer = document.querySelector(select.elements.booksList);
     for (let book of dataSource.books) {
-      //console.log(book);
       const generatedHTML = templates.cartProduct(book);
+      const thisElement = dataSource.books.indexOf(book);
       thisProduct.element = utils.createDOMFromHTML(generatedHTML);
-      const productContainer = document.querySelector(
-        select.elements.booksList
-      );
+      const rating = book.rating;
+      console.log(book.name + ' - ' + rating);
       productContainer.appendChild(thisProduct.element);
+      const ratingBarDOM = document.querySelectorAll(select.elements.rating);
+      const result = prepareRatingBar(rating);
+      const ratingBarStyle = result.ratingBarStyle;
+      const widthPercentBar = result.widthPercentBar;
+      ratingBarDOM[thisElement].style.background = ratingBarStyle;
+      ratingBarDOM[thisElement].style.width = widthPercentBar + '%';
     }
   }
 
-  // event.target.parentElement.matches('.book__image')
-  // lub
-  // event.target.parentElement.classList.contains('book__image')
-
-  /*   function initActions() {
-    const dom = {};
-    dom.bookCovers = document.querySelector('.books-list') || [];
-    console.log(dom.bookCovers);
-    dom.bookCovers.forEach((cover) => {
-      cover.addEventListener('dblClick', function (event) {
-        if (event.target.parentElement.matches('.book__image')) {
-          event.preventDefault();
-          console.log('Dubble Click!!!');
-          const dataId = event.target.dataset.id;
-          if (!favoriteBooks.includes(dataId)) {
-            event.target.classList.add('favorite');
-            favoriteBooks.push(dataId);
-          } else {
-            event.target.classList.remove('favorite');
-            favoriteBooks.splice(favoriteBooks.indexOf(dataId), 1);
-          }
-          console.clear();
-          console.log(favoriteBooks);
-        }
-      });
-    });
-  } */
+  function prepareRatingBar(rating) {
+    let ratingBarStyle = '';
+    // Przygotowanie wartości koloru paska w zależności od oceny
+    if (rating < 6) {
+      // console.log('średnia książka');
+      ratingBarStyle = 'linear-gradient(to bottom, #fefcea 0%, #f1da36 100%)';
+    } else if (rating > 6 && rating <= 8) {
+      // console.log('może być');
+      ratingBarStyle = 'linear-gradient(to bottom, #b4df5b 0%,#b4df5b 100%)';
+    } else if (rating > 8 && rating <= 9) {
+      // console.log('godna polecenia książka');
+      ratingBarStyle = 'linear-gradient(to bottom, #299a0b 0%, #299a0b 100%)';
+    } else if (rating > 9) {
+      // console.log('super książka');
+      ratingBarStyle = 'linear-gradient(to bottom, #ff0084 0%,#ff0084 100%)';
+    }
+    //Przygotowanie długości paska w zależności od oceny.
+    const widthPercentBar = rating * 10;
+    console.log(widthPercentBar + '%');
+    console.log(ratingBarStyle);
+    // ratingBarStyle += ' width: ' + widthPercentBar + '%;"';
+    //Dodawanie stylu paska do strony
+    return {ratingBarStyle: ratingBarStyle, widthPercentBar: widthPercentBar};
+  }
 
   function initActions() {
-    // console.log(document.querySelector(select.elements.booksList));
-    // console.log(document.querySelectorAll(select.elements.bookImage));
-    // console.log('Adults only: ', optionAdults);
-    // console.log('NonFicition', optionNonFiction);
-    console.log(document.querySelector(select.elements.filters));
     document
       .querySelector(select.elements.booksList)
       .addEventListener('dblclick', function (event) {
@@ -84,7 +83,6 @@
             favoriteBooks.splice(favoriteBooks.indexOf(dataId), 1);
           }
           console.clear();
-          // console.log(favoriteBooks);
         }
       });
     document
@@ -93,13 +91,10 @@
         if (event.target.matches('input[type="checkbox"]')) {
           const value = event.target.value;
           if (!filters.includes(value)) {
-            // console.log(value);
             filters.push(value);
           } else {
             filters.splice(filters.indexOf(value), 1);
           }
-          // console.clear();
-          //console.log(filters);
         }
         filterAction();
       });
@@ -112,26 +107,18 @@
     for (let book of data) {
       const bookImageDOM = document.querySelectorAll(select.elements.bookImage);
       for (let filter of filters) {
-        // console.log('Filter: ' + filter);
-        // console.log('warunek: ' + book.details[filter]);
         if (book.details[filter]) {
-          // console.log('include');
           if (!filterAction.includes(data.indexOf(book))) {
             filterAction.push(data.indexOf(book));
-            // console.log(book.name);
-            // console.log(book.details);
           }
         }
       }
       if (filterAction.includes(data.indexOf(book))) {
-        // console.log('Zawiera!!!');
         bookImageDOM[data.indexOf(book)].classList.add('hidden');
       } else {
         bookImageDOM[data.indexOf(book)].classList.remove('hidden');
       }
     }
-    // console.log('filterAction: ', filterAction);
-    
   }
 
   const app = {
