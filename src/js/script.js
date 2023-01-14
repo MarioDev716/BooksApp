@@ -75,7 +75,6 @@
           //mam problem ze zrozumieniem dlaczego w tym miejscu nie działa mi deklaracja event.target.parentElement.classList.contains('book__image') lub event.target.parentElement.matches('.book__image').
           //w tej chwili dwuklik wyzwala się tylko jak kliknę na ikone serca po wykonaniu hover na obrazku.
           event.preventDefault();
-          console.log('Dubble Click!!!');
           const dataId = event.target.dataset.id;
           if (!favoriteBooks.includes(dataId)) {
             event.target.classList.add('favorite');
@@ -83,10 +82,9 @@
           } else {
             event.target.classList.remove('favorite');
             favoriteBooks.splice(favoriteBooks.indexOf(dataId), 1);
-            console.log('test');
           }
           console.clear();
-          console.log(favoriteBooks);
+          // console.log(favoriteBooks);
         }
       });
     document
@@ -95,14 +93,45 @@
         if (event.target.matches('input[type="checkbox"]')) {
           const value = event.target.value;
           if (!filters.includes(value)) {
-            console.log(value);
+            // console.log(value);
             filters.push(value);
           } else {
             filters.splice(filters.indexOf(value), 1);
           }
-          console.log(filters);
+          // console.clear();
+          //console.log(filters);
         }
+        filterAction();
       });
+  }
+
+  function filterAction() {
+    console.clear();
+    let filterAction = [];
+    const data = dataSource.books;
+    for (let book of data) {
+      const bookImageDOM = document.querySelectorAll(select.elements.bookImage);
+      for (let filter of filters) {
+        // console.log('Filter: ' + filter);
+        // console.log('warunek: ' + book.details[filter]);
+        if (book.details[filter]) {
+          // console.log('include');
+          if (!filterAction.includes(data.indexOf(book))) {
+            filterAction.push(data.indexOf(book));
+            // console.log(book.name);
+            // console.log(book.details);
+          }
+        }
+      }
+      if (filterAction.includes(data.indexOf(book))) {
+        // console.log('Zawiera!!!');
+        bookImageDOM[data.indexOf(book)].classList.add('hidden');
+      } else {
+        bookImageDOM[data.indexOf(book)].classList.remove('hidden');
+      }
+    }
+    // console.log('filterAction: ', filterAction);
+    
   }
 
   const app = {
