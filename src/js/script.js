@@ -1,30 +1,26 @@
 {
   ('use strict');
 
+  const select = {
+    templateOf: {
+      cartProduct: '#template-book',
+    },
+    elements: {
+      booksList: '.books-list',
+      bookImage: 'book__image',
+      filters: '.filters',
+      rating: '.book__rating__fill',
+    },
+  };
+
+  const templates = {
+    cartProduct: Handlebars.compile(
+      document.querySelector(select.templateOf.cartProduct).innerHTML
+    ),
+  };
+
   class BooksApp {
     constructor() {
-      this.select = {
-        templateOf: {
-          cartProduct: '#template-book',
-        },
-        elements: {
-          booksList: '.books-list',
-          bookImage: '.book__image',
-          filters: '.filters',
-          rating: '.book__rating__fill',
-        },
-      };
-
-      this.templates = {
-        cartProduct: Handlebars.compile(
-          document.querySelector(this.select.templateOf.cartProduct).innerHTML
-        ),
-      };
-
-      this.settings = {
-        dbBooks: 'dataSource.books',
-      };
-
       this.favoriteBooks = [];
       this.filters = [];
 
@@ -37,19 +33,16 @@
     productRender() {
       const books = this.books;
       const productContainer = document.querySelector(
-        this.select.elements.booksList
+        select.elements.booksList
       );
       console.log(books);
       for (let book of books) {
-        const generatedHTML = this.templates.cartProduct(book);
+        const generatedHTML = templates.cartProduct(book);
         const thisElement = books.indexOf(book);
         this.element = utils.createDOMFromHTML(generatedHTML);
         const rating = book.rating;
-        // console.log(book.name + ' - ' + rating);
         productContainer.appendChild(this.element);
-        const ratingBarDOM = document.querySelectorAll(
-          this.select.elements.rating
-        );
+        const ratingBarDOM = document.querySelectorAll(select.elements.rating);
         const result = this.prepareRatingBar(rating);
         const ratingBarStyle = result.ratingBarStyle;
         const widthPercentBar = result.widthPercentBar;
@@ -72,8 +65,6 @@
       }
       //Przygotowanie długości paska w zależności od oceny.
       const widthPercentBar = rating * 10;
-      // console.log(widthPercentBar + '%');
-      // console.log(ratingBarStyle);
       //Dodawanie stylu paska do strony
       return {
         ratingBarStyle: ratingBarStyle,
@@ -84,22 +75,24 @@
     initActions() {
       const thisApp = this;
       document
-        .querySelector(thisApp.select.elements.booksList)
+        .querySelector(select.elements.booksList)
         .addEventListener('dblclick', function (event) {
-          console.log(thisApp.select.elements.bookImage);
+          console.log(select.elements.bookImage);
           if (
             event.target &&
-            event.target.matches(thisApp.select.elements.bookImage)
+            event.target.offsetParent.classList.contains(
+              select.elements.bookImage
+            )
           ) {
             //mam problem ze zrozumieniem dlaczego w tym miejscu nie działa mi deklaracja event.target.parentElement.classList.contains('book__image') lub event.target.parentElement.matches('.book__image').
             //w tej chwili dwuklik wyzwala się tylko jak kliknę na ikone serca po wykonaniu hover na obrazku.
             event.preventDefault();
-            const dataId = event.target.dataset.id;
+            const dataId = event.target.offsetParent.dataset.id;
             if (!thisApp.favoriteBooks.includes(dataId)) {
-              event.target.classList.add('favorite');
+              event.target.offsetParent.classList.add('favorite');
               thisApp.favoriteBooks.push(dataId);
             } else {
-              event.target.classList.remove('favorite');
+              event.target.offsetParent.classList.remove('favorite');
               thisApp.favoriteBooks.splice(
                 thisApp.favoriteBooks.indexOf(dataId),
                 1
@@ -109,7 +102,7 @@
           }
         });
       document
-        .querySelector(thisApp.select.elements.filters)
+        .querySelector(select.elements.filters)
         .addEventListener('click', function (event) {
           if (event.target.matches('input[type="checkbox"]')) {
             const value = event.target.value;
@@ -131,12 +124,13 @@
       const books = this.books;
       for (let book of books) {
         const bookImageDOM = document.querySelectorAll(
-          this.select.elements.bookImage
+          '.' + select.elements.bookImage
         );
         for (let filter of thisApp.filters) {
           if (book.details[filter]) {
             if (!filterAction.includes(books.indexOf(book))) {
               filterAction.push(books.indexOf(book));
+              console.log('Add book ' + book.name + ' to array!');
             }
           }
         }
